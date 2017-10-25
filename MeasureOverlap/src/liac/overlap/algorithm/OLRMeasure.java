@@ -34,15 +34,15 @@ public class OLRMeasure extends AlgorithmMeasure {
 		double K = this.first.getInvCov().get(0, 1) * this.second.getInvCov().get(1, 1) - 
 				   this.second.getInvCov().get(0, 1) * this.first.getInvCov().get(1, 1);
         
-        double M = F * G - E * H;
-		double P = K;
-        double Q = I + J - K * (this.second.getMean().get(1) + this.first.getMean().get(1));
-        double S = -(M + I * this.second.getMean().get(1) + J * this.first.getMean().get(1));
+        double M = E * H - F * G;
+		double a = K;
+        double b = I + J - K * (this.second.getMean().get(1) + this.first.getMean().get(1));
+        double c = M - I * this.second.getMean().get(1) - J * this.first.getMean().get(1) + K * (this.second.getMean().get(1) * this.first.getMean().get(1));
 
-        if ((Math.pow(Q, 2) - 4 * P * S) < 0)
+        if ((Math.pow(b, 2) - 4 * a * c) < 0)
             return Double.NaN;
 
-        return Math.max((-Q + Math.sqrt(Math.pow(Q, 2) - 4 * P * S)) / (2 * P), (-Q - Math.sqrt(Math.pow(Q, 2) - 4*P*S)) / (2*P));
+        return Math.max((-b + Math.sqrt(Math.pow(b, 2) - 4 * a * c)) / (2 * a), (-b - Math.sqrt(Math.pow(b, 2) - 4*a*c)) / (2*a));
 	}
 	
 	
@@ -54,7 +54,7 @@ public class OLRMeasure extends AlgorithmMeasure {
 		double x_step = e * (this.first.getMean().get(0) - this.second.getMean().get(0)); // Each step for x
         double y_step = e * (this.first.getMean().get(1) - this.second.getMean().get(1)); // Each step for y
 		
-		double p_x = this.first.getMean().get(0), p_y;
+		double p_x = this.first.getMean().get(0), p_y = this.first.getMean().get(1);
 		
 		SimpleMatrix p = new SimpleMatrix(2, 1);
 		p.set(0, 0, p_x);
@@ -63,7 +63,7 @@ public class OLRMeasure extends AlgorithmMeasure {
 		{
 			p_x = p_x - x_step;
 			p.set(0, p_x);
-			p_y = this.RC(p);
+			p_y = p_y - y_step; //this.RC(p);
 		} while (Double.isNaN(p_y));
 		
 		p.set(1, 0, p_y);
@@ -80,7 +80,7 @@ public class OLRMeasure extends AlgorithmMeasure {
 		{	
 			// Next point on ridge curve
 			p_next.set(0, 0, p.get(0) - x_step);
-			p_y = this.RC(p_next);
+			p_y = p.get(1, 0) - y_step; //this.RC(p_next);
 						
             if (!Double.isNaN(p_y))
 			{
