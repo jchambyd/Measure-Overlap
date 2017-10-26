@@ -16,14 +16,14 @@ public abstract class AlgorithmMeasure {
 
 	protected GaussianDistribution first;
 	protected GaussianDistribution second;
-		
+
 	public abstract double overlapRate();
-	
+
 	protected double getPDF(SimpleMatrix x)
 	{
 		return this.first.getPrior() * this.first.mvnpdf(x) + this.second.getPrior() * this.second.mvnpdf(x);
-	}	
-	
+	}
+
 	/**
 	 * @return the first
 	 */

@@ -17,21 +17,21 @@ public class SimplificationBhattMeasure extends AlgorithmMeasure {
 	public SimplificationBhattMeasure(GaussianDistribution first, GaussianDistribution second)
 	{
 		this.first = first;
-		this.second = second;		
+		this.second = second;
 	}
-	
+
 	@Override
 	public double overlapRate()
 	{
-		return this.bhattCoefficient(this.first.getMean(), this.second.getMean(), 
-				                     this.first.getCov(), this.second.getCov(), 
-									 this.first.getDet(), this.second.getDet());
+		return this.bhattCoefficient(this.first.getMean(), this.second.getMean(),
+				this.first.getCov(), this.second.getCov(),
+				this.first.getDet(), this.second.getDet());
 	}
-	
+
 	private double bhattDistance(SimpleMatrix meanX, SimpleMatrix meanY, SimpleMatrix covX, SimpleMatrix covY, double detX, double detY)
 	{
 		SimpleMatrix distance = meanX.minus(meanY);
-		
+
 		SimpleMatrix covariance = covX.plus(covY).divide(2);
 
 		SimpleMatrix bhattDistance = ((distance.transpose()).mult(covariance.invert()).mult(distance)).divide(8);
